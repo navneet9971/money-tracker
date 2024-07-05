@@ -1,6 +1,6 @@
 const express = require('express');
-const Transaction = require('../models/Transaction'); // Adjust the path if necessary
-const Auth = require('../models/Auths'); // Adjust the path if necessary
+const Transaction = require('../models/Transaction'); 
+const Auth = require('../models/Auths'); 
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const secretKey = "secretKey";
