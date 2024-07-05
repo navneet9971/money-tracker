@@ -18,7 +18,7 @@ const SignUpPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const url = "http://localhost:4000/api/auth";
+        const url = "http://localhost:4000/api/signin";
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -35,7 +35,7 @@ const SignUpPage = () => {
                     email: '',
                     password: '',
                 });
-                navigate('/login');
+                navigate('/');
             } else {
                 setError(result.error || 'Something went wrong!');
             }
@@ -49,7 +49,7 @@ const SignUpPage = () => {
             <div className='signup_form_container'>
                 <div className='left'>
                     <h1>Welcome Back</h1>
-                    <Link to="/login">
+                    <Link to="/">
                         <button type='button' className='white_btn'>
                             Sign in
                         </button>

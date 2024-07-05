@@ -3,23 +3,17 @@ import Moneytracker from './component/trackerPage/Moneytracker';
 import LoginPage from './component/auth/LoginPage';
 import SignUpPage from './component/auth/SignUpPage';
 
-
 function App() {
-
   return (
     <Router>
-    <div className='app-main-container'>
-  
+      <div className='app-main-container'>
         <Routes>
-          <Route path="/login" component={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route 
-            path="/money" 
-           element={<Moneytracker />}
-          />
+          <Route path="/money" element={<Moneytracker />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-     
-    </div>
+      </div>
     </Router>
   );
 }

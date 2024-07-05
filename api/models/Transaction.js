@@ -6,6 +6,7 @@ const TransactionSchema = new Schema({
     price: { type: Number, required: true },
     description: { type: String, required: true },
     datetime: { type: Date, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth', required: true }
 });
 
 const TransactionModel = model('Transaction', TransactionSchema);

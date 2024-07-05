@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); // Using bcryptjs for hashing
 
-// Define the schema
 const AuthSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
@@ -15,12 +14,19 @@ const AuthSchema = new Schema({
 // Password hashing middleware
 AuthSchema.pre('save', async function(next) {
     if (this.isModified('password') || this.isNew) {
-        this.password = await bcrypt.hash(this.password, 10);
+        try {
+           const salt = await bcrypt.genSalt(10)
+           const hashedPassword = await bcrypt.hash(this.password, salt)
+           this.password = hashedPassword;
+           next();
+        } catch (err) {
+            console.error('Error hashing password:', err);
+            next(err); 
+        }
+    } else {
+        next();
     }
-    next();
 });
 
-// Create the model
 const Auth = model('Auth', AuthSchema);
-
 module.exports = Auth;

@@ -3,12 +3,13 @@ import "../../Styles/auth/SignupPage.css"
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const SignUpPage = () => {
+const LoginPage = () => {
     const [data, setData] = useState({
         email: '',
         password: '',
     });
     const [error, setError] = useState("")
+    const navigate = useNavigate();
 
     const handleChange = ({ currentTarget: input }) => {
         setData({ ...data, [input.name]: input.value });
@@ -17,22 +18,53 @@ const SignUpPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = "http://localhost:4000/api/auth";
+            //  Login Request
+            const url = "http://localhost:4000/api/login";
             const { data: res } = await axios.post(url, data);
-            localStorage.setItem("token", res.data);
-            window.location="/"
-            console.log(res.message)
+            
+            // Store token in localStorage
+            localStorage.setItem("token", res.token);
+            console.log("Login successful");
+    
+            //  Retrieve Token from localStorage
+            const token = localStorage.getItem("token");
+            console.log("Token retrieved:", token); // Ensure the token is correctly retrieved
+    
+            //Fetch User Data
+            const userDataUrl = "http://localhost:4000/api/profile";
+            const { data: user } = await axios.get(userDataUrl, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
+            console.log("User data:", user.user); 
+            navigate('/money', { state: { userData: user } });
+    
         } catch (error) {
-            if (error.response &&
-                error.response.status >= 400 &&
-                error.response.status <= 500
-            ) {
-                setError(error.response.data.message)
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                const { status, data } = error.response;
+                if (status >= 400 && status < 500) {
+                    setError(data.error); // Set error message from backend response
+                } else {
+                    console.error('Server Error:', data); // Log unexpected server errors
+                }
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('No response received:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Request setup error:', error.message);
             }
-
         }
-    }
-console.log("hello")
+    };
+    
+    
+
+
+console.log("Working Login Page")
+
     return (
         <div className='login_container'>
             <div className='login_form_container'>
@@ -79,4 +111,4 @@ console.log("hello")
     )
 }
 
-export default SignUpPage
+export default LoginPage

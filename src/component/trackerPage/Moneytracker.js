@@ -1,23 +1,51 @@
 import { useEffect, useState } from 'react';
 import './Moneytracker.css';
+import { useLocation } from 'react-router-dom';
 
 function Moneytracker() {
+   const location = useLocation();
+   const userData = location.state?.userData;
+   const showUser = userData.user
+
+
   const [name, setName] = useState();
   const [datetime, setDatetime] = useState();
   const [description, setDescription] = useState();
   const [price, setPrice] = useState();
   const [transactions, setTransactions] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    getTransactions().then(setTransactions)
-  }, [])
+    getTransactions()
+      .then(data => {
+        setTransactions(data.transactions);
+      })
+      .catch(error => {
+        console.log("some error occurred fetch transactions")
+      });
+  }, []);
 
   async function getTransactions() {
-    const url = process.env.REACT_APP_API_URL + '/transactions';
-    const response = await fetch(url);
+  const url = 'http://localhost:4000/api/transactions';
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch transactions: ${response.status}`);
+    }
+
     return await response.json();
+  } catch (error) {
+    throw new Error(`Error fetching transactions: ${error.message}`);
   }
-  console.log(transactions);
+}
+
+  
 
   function addNewTransaction(ev) {
     ev.preventDefault();
@@ -25,6 +53,7 @@ function Moneytracker() {
     fetch(url, {
       method: 'POST',
       headers: {
+          Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -54,6 +83,8 @@ function Moneytracker() {
 
   return (
     <main>
+<p className='username-show'>{showUser.firstName + ' ' + showUser.lastName}</p>
+
       <h1>₹{integerPart}<span>{fractionalPart}</span></h1>
       <form onSubmit={addNewTransaction}>
         <div className='basic'>
@@ -88,13 +119,13 @@ function Moneytracker() {
       <div className='transactions'>
         {transactions.length > 0 && transactions.map(transaction => (
           <div className='transaction'>
-            <div className='left'>
+            <div className='left-transaction'>
               <div className='name'>{transaction.name}</div>
               <div className='description'>
                 {transaction.description}
               </div>
             </div>
-            <div className='right'>
+            <div className='right-transaction'>
               <div className={'price ' + (transaction.price < 0 ? 'red' : 'green')}>{transaction.price}</div>
               <div className='datetime'>{transaction.datetime}</div>
             </div>
