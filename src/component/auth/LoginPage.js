@@ -68,7 +68,7 @@ console.log("Working Login Page")
     return (
         <div className='login_container'>
             <div className='login_form_container'>
-                <div className='left'>
+                <div className='left-login'>
                 <form className='form_container' onSubmit={handleSubmit}>
                         <h1>Login to Your Account</h1>
                         <input
@@ -97,7 +97,7 @@ console.log("Working Login Page")
                     </form>
 
                 </div>
-                <div className='right'>
+                <div className='right-login'>
                 <h1>New Here</h1>
                     <Link to="/signup">
                         <button type='button' className='white_btn'>
